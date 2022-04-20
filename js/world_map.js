@@ -13,25 +13,69 @@ async function getData() {
 getData().then((data) => {
     if(data==null) 
         return;
-    // set the dimensions and margins of the graph
-    const margin = { top: 5, right: 5, bottom: 5, left: 5 },
-    width = document.querySelector("body").clientWidth,
-    height = 500;
-
-    const svg = d3.select("#d3_demo").attr("viewBox", [0, 0, width, height]);
-
-    let projection = d3.geoEquirectangular().center([0, 0]);
-
-    const pathGenerator = d3.geoPath().projection(projection);
-
-    let g = svg.append("g");
-
-    d3
-    .json(
-        "https://raw.githubusercontent.com/iamspruce/intro-d3/main/data/countries-110m.geojson"
-    )
-    .then((data) => {
-        g.selectAll("path").data(data.features).join("path").attr("d", pathGenerator);
-    });
+    var margin = {top: 10, right: 10, bottom: 10, left: 10};
+    var width = 960 - margin.left - margin.right;
+    var height = 500 - margin.top - margin.bottom;
+    var projection = d3.geoNaturalEarth1()
+                    .center([0, 15]) 
+                    .rotate([-9,0])
+                    .scale([1300/(2*Math.PI)]) 
+                    .translate([450,300]);
+    var path = d3.geoPath()
+                .projection(projection);
+    var svg = d3.select("svg")
+                .append("g")
+                .attr("width", width)
+                .attr("height", height);
+    var tooltip = d3.select("div.tooltip");
+    d3.queue()
+    .defer(d3.json, "https://gist.githubusercontent.com/abrahamdu/50147e692857054c2bf88c443946e8a5/raw/66d5543cce335f4360881dae87d96726e931e4d4/world-110m.json")
+    .defer(d3.csv, "https://gist.githubusercontent.com/abrahamdu/50147e692857054c2bf88c443946e8a5/raw/66d5543cce335f4360881dae87d96726e931e4d4/world-country-names.csv")
+    .await(ready);
+    function ready(error, world, names) {
+        if (error) throw error;
+        var margin = {top: 10, right: 10, bottom: 10, left: 10};
+        var width = 960 - margin.left - margin.right;
+        var height = 500 - margin.top - margin.bottom;
+        var projection = d3.geoNaturalEarth1()
+                        .center([0, 15]) 
+                        .rotate([-9,0])
+                        .scale([1300/(2*Math.PI)]) 
+                        .translate([450,300]);
+        var path = d3.geoPath()
+                    .projection(projection);
+        var svg = d3.select("svg")
+                    .append("g")
+                    .attr("width", width)
+                    .attr("height", height);
+        var tooltip = d3.select("div.tooltip");
+        var countries1 = topojson.feature(world, world.objects.countries).features;
+            countries = countries1.filter(function(d) {
+            return names.some(function(n) {
+            if (d.id == n.id) return d.name = n.name;
+            })});
+        svg.selectAll("path")
+                    .data(countries)
+                    .enter()
+                    .append("path")
+                    .attr("stroke","green")
+                    .attr("stroke-width",1)
+                    .attr("fill", "white")
+                    .attr("d", path )
+                    .on("mouseover",function(d,i){
+                        d3.select(this).attr("fill","grey").attr("stroke-width",2);
+                        return tooltip.style("hidden", false).html(d.name);
+                    })
+                    .on("mousemove",function(d){
+                        tooltip.classed("hidden", false)
+                            .style("top", (d3.event.pageY) + "px")
+                            .style("left", (d3.event.pageX + 10) + "px")
+                            .html(d.name);
+                    })
+                    .on("mouseout",function(d,i){
+                        d3.select(this).attr("fill","white").attr("stroke-width",1);
+                        tooltip.classed("hidden", true);
+                    });
+    }
 
 });
