@@ -48,10 +48,13 @@ function ready(error, data, gfpdata, pricedata) {
                     return tooltip.style("hidden", false).html(i.name);
                 })
                 .on("mousemove",function(d,i){
+                    countryObj = pricedata.find(c => c["Entity"] == i.name);
+                    let healthCost = countryObj && countryObj["Cost of healthy diet (2017 USD per day)"] ? parseFloat(countryObj["Cost of healthy diet (2017 USD per day)"]).toFixed(2) : "";
+                    let healthHtml = healthCost!="" ? i.name + "<br>$" + healthCost + "/day" : i.name; 
                     tooltip.classed("hidden", false)
                         .style("top", (d.pageY) + "px")
                         .style("left", (d.pageX + 10) + "px")
-                        .html(i.name);
+                        .html(healthHtml);
                 })
                 .on("mouseout",function(d,i){
                     d3.select(this).attr("fill","white").attr("stroke-width",1);
