@@ -1,7 +1,8 @@
 async function getData() {
     try {
-        let data = await d3.csv("https://raw.githubusercontent.com/sreeragiyer/GFP-visualizer/main/data/gfp_sampled.csv");
-        return data;
+        let gfpdata = await d3.csv("https://raw.githubusercontent.com/sreeragiyer/GFP-visualizer/main/data/gfp_sampled.csv");
+        let pricedata = await d3.csv("https://raw.githubusercontent.com/sreeragiyer/GFP-visualizer/main/data/food-prices.csv");
+        return [gfpdata, pricedata];
     }
     catch(ex) {
         console.log("error while fetching data: "+ex);
@@ -11,8 +12,9 @@ async function getData() {
 }
 
 
-function ready(error, world, names) {
+function ready(error, data, gfpdata, pricedata) {
     if (error) throw error;
+    [world, names] = data
     let margin = {top: 10, right: 10, bottom: 10, left: 10};
     let width = 960 - margin.left - margin.right;
     let height = 500 - margin.top - margin.bottom;
@@ -43,13 +45,13 @@ function ready(error, world, names) {
                 .attr("d", path )
                 .on("mouseover",function(d,i){
                     d3.select(this).attr("fill","grey").attr("stroke-width",2);
-                    return tooltip.style("hidden", false).html(d.name);
+                    return tooltip.style("hidden", false).html(i.name);
                 })
-                .on("mousemove",function(d){
+                .on("mousemove",function(d,i){
                     tooltip.classed("hidden", false)
-                        .style("top", (d3.event.pageY) + "px")
-                        .style("left", (d3.event.pageX + 10) + "px")
-                        .html(d.name);
+                        .style("top", (d.pageY) + "px")
+                        .style("left", (d.pageX + 10) + "px")
+                        .html(i.name);
                 })
                 .on("mouseout",function(d,i){
                     d3.select(this).attr("fill","white").attr("stroke-width",1);
@@ -57,12 +59,27 @@ function ready(error, world, names) {
                 });
 }
 
+async function getMapData() {
+    try {
+        let jsondata = await d3.json("https://gist.githubusercontent.com/abrahamdu/50147e692857054c2bf88c443946e8a5/raw/66d5543cce335f4360881dae87d96726e931e4d4/world-110m.json");
+        let csvdata = await d3.csv("https://gist.githubusercontent.com/abrahamdu/50147e692857054c2bf88c443946e8a5/raw/66d5543cce335f4360881dae87d96726e931e4d4/world-country-names.csv");
+        return [jsondata, csvdata];
+    }
+    catch(ex) {
+        console.log("could not fetch map data "+ex);
+        return null;
+    }
+}
 
 getData().then((data) => {
     if(data==null) 
         return;
-    d3.queue()
-    .defer(d3.json, "https://gist.githubusercontent.com/abrahamdu/50147e692857054c2bf88c443946e8a5/raw/66d5543cce335f4360881dae87d96726e931e4d4/world-110m.json")
-    .defer(d3.csv, "https://gist.githubusercontent.com/abrahamdu/50147e692857054c2bf88c443946e8a5/raw/66d5543cce335f4360881dae87d96726e931e4d4/world-country-names.csv")
-    .await(ready);
+    [gfpdata, pricedata] = data;
+
+    getMapData().then((data) => {
+        if(data==null)
+            return;
+        ready(null, data, gfpdata, pricedata)
+    });
+
 });
