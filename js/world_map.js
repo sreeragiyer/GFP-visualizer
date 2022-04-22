@@ -1,3 +1,5 @@
+import {plotline} from './lineplot.js'
+
 async function getData() {
     try {
         let gfpdata = await d3.csv("https://raw.githubusercontent.com/sreeragiyer/GFP-visualizer/main/data/gfp_sampled.csv");
@@ -14,7 +16,7 @@ async function getData() {
 
 function ready(error, data, gfpdata, pricedata) {
     if (error) throw error;
-    [world, names] = data
+    let [world, names] = data
     let margin = {top: 10, right: 10, bottom: 10, left: 10};
     let width = 960 - margin.left - margin.right;
     let height = 500 - margin.top - margin.bottom;
@@ -48,7 +50,7 @@ function ready(error, data, gfpdata, pricedata) {
                     return tooltip.style("hidden", false).html(i.name);
                 })
                 .on("mousemove",function(d,i){
-                    countryObj = pricedata.find(c => c["Entity"] == i.name);
+                    let countryObj = pricedata.find(c => c["Entity"] == i.name);
                     let healthCost = countryObj && countryObj["Cost of healthy diet (2017 USD per day)"] ? parseFloat(countryObj["Cost of healthy diet (2017 USD per day)"]).toFixed(2) : "";
                     let healthHtml = healthCost!="" ? i.name + "<br>$" + healthCost + "/day" : i.name; 
                     tooltip.classed("hidden", false)
@@ -77,12 +79,13 @@ async function getMapData() {
 getData().then((data) => {
     if(data==null) 
         return;
-    [gfpdata, pricedata] = data;
+    let [gfpdata, pricedata] = data;
 
     getMapData().then((data) => {
         if(data==null)
             return;
-        ready(null, data, gfpdata, pricedata)
+        ready(null, data, gfpdata, pricedata);
+        plotline(gfpdata);
     });
-
+    
 });
