@@ -61,6 +61,9 @@ function ready(error, data, gfpdata, pricedata) {
                 .on("mouseout",function(d,i){
                     d3.select(this).attr("fill","white").attr("stroke-width",1);
                     tooltip.classed("hidden", true);
+                })
+                .on("click", function(d,i) {
+                    plotline(gfpdata, i.name)
                 });
 }
 
@@ -84,8 +87,9 @@ getData().then((data) => {
     getMapData().then((data) => {
         if(data==null)
             return;
+
         ready(null, data, gfpdata, pricedata);
-        plotline(gfpdata);
+
     });
-    
+
 });
