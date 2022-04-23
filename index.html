@@ -7,9 +7,11 @@
     <script src="https://d3js.org/d3-queue.v3.min.js"></script>
   </head>
   <body>
-   <svg id="d3_demo" width="1200" height="900"></svg>
+   <svg class="mapsvg" id="d3_demo" width="1200" height="900"></svg>
    <div class="tooltip"></div>
-   <div id="lp"></div>
+   <div class="lpdiv" id="lp">
+     <div class="lptopdiv"><p class="ptitle">Trends in food prices</p><input id="popoutclose" class="closebtn" type="button" value="X" /></div>
+   </div>
    <script type="module" src="js/lineplot.js"></script>
    <script type="module" src="js/world_map.js"></script>
   </body>

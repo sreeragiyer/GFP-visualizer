@@ -1,4 +1,7 @@
-import {plotline} from './lineplot.js'
+import {plotline} from './lineplot.js';
+
+let popout = document.getElementById("lp");
+let closebtn = document.getElementById("popoutclose");
 
 async function getData() {
     try {
@@ -63,6 +66,7 @@ function ready(error, data, gfpdata, pricedata) {
                     tooltip.classed("hidden", true);
                 })
                 .on("click", function(d,i) {
+                    popout.style = "display:flex";
                     plotline(gfpdata, i.name)
                 });
 }
@@ -92,4 +96,9 @@ getData().then((data) => {
 
     });
 
+});
+
+closebtn.addEventListener("click", (e) => {
+    d3.selectAll("#lp > svg").remove(); 
+    popout.style = "display:none";
 });
