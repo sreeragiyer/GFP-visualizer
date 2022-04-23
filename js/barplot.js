@@ -88,13 +88,58 @@ export function plotLineBelowBar(commData, commName) {
     }
     let commDataAvg = dgrp.map(g => ({"date": g[0]["date"], "mp_price": g.map(c => parseFloat(c["mp_price"])).reduce((a,b) => a+b,0).toFixed(2)/g.length}));
     let xAxis = d3.axisBottom(x).tickFormat(d3.timeFormat("%m/%y"));
-    svg.append("g")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
+    let xAxisCall = svg.append("g")
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(xAxis);
     svg.append("g")
         .call(d3.axisLeft(y));
+
+    let clip = svg.append("defs").append("svg:clipPath")
+                    .attr("id", "clip")
+                    .append("svg:rect")
+                    .attr("width", width )
+                    .attr("height", height )
+                    .attr("x", 0)
+                    .attr("y", 0);
+
+    let idleTimeout;
+    function idled() { idleTimeout = null; }
+
+    const updateChart = (d) => {
+        let extent = d.selection;
+
+        // If no selection, back to initial coordinate. Otherwise, update X axis domain
+        if(!extent){
+            if (!idleTimeout) return idleTimeout = setTimeout(idled, 350); // This allows to wait a little bit
+            x.domain([ 4,8])
+        }
+        else{
+            x.domain([ x.invert(extent[0]), x.invert(extent[1]) ])
+            svg.select(".brush").call(brush.move, null) // This remove the grey brush area as soon as the selection has been done
+        }
+
+        // Update axis and line position
+        xAxisCall.transition().duration(1000).call(d3.axisBottom(x).tickFormat(d3.timeFormat("%m/%y")));
+        svg.select('.line')
+            .transition()
+            .duration(1000)
+            .attr("d", d3.line()
+                .x(function(d) { return x(d["date"]) })
+                .y(function(d) { return y(d["mp_price"]) })
+        );
+    };
+          
+    
+    let brush = d3.brushX()                  
+                    .extent( [ [0,0], [width,height] ] )  
+                    .on("end", updateChart);
+              
+    svg.append('g')
+        .attr("clip-path", "url(#clip)")
+
     svg.append("path")
         .datum(commDataAvg)
+        .attr("class", "line")
         .attr("fill", "none")
         .attr("stroke", "black")
         .attr("stroke-width", 1.5)
@@ -102,6 +147,22 @@ export function plotLineBelowBar(commData, commName) {
           .x(function(d) { return x(d["date"]) })
           .y(function(d) { return y(d["mp_price"]) })
         );
+
+        
+    svg.append("g")
+        .attr("class", "brush")
+        .call(brush);
+    
+    svg.on("dblclick",function() {
+        x.domain(d3.extent(commDataAvg, function(d) { return d["date"]; }));
+        xAxisCall.transition().call(d3.axisBottom(x).tickFormat(d3.timeFormat("%m/%y")));
+        svg.select('.line')
+            .transition()
+            .attr("d", d3.line()
+                .x(function(d) { return x(d["date"]) })
+                .y(function(d) { return y(d["mp_price"]) })
+            );
+    });
 
 }
 
