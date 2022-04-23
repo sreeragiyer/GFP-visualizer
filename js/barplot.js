@@ -3,6 +3,8 @@ export function plotbar(commData, commName) {
     let backbtn = document.getElementById("backbar");
     backbtn.style.visibility = "visible";
     d3.selectAll("#lp > svg").remove(); 
+    let countryName = commData[0]["adm0_name"];
+    document.getElementById("linep").innerText = `Comparison of ${commName} prices across markets in ${countryName}`;
     let marketNames = Array.from(new Set(commData.map(c => c["adm1_name"])));
     let plotData = [];
     for(let i=0;i<marketNames.length;i++) {
