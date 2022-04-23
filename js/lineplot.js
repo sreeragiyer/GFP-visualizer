@@ -1,3 +1,4 @@
+import {plotbar} from './barplot.js'
 
 export function plotline(gfpdata, countryName) {
     let countryData = gfpdata.filter(c => c["adm0_name"] == countryName)
@@ -23,6 +24,9 @@ function plotLineForCommodity(commData, commName) {
                 .append("svg")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
+                .on("click", () => {
+                    plotbar(commData, commName);
+                })
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     let dgrp = []
@@ -55,8 +59,6 @@ function plotLineForCommodity(commData, commName) {
         .attr("d", d3.line()
           .x(function(d) { return x(d["date"]) })
           .y(function(d) { return y(d["mp_price"]) })
-          );
-
-
+        );
 
 }

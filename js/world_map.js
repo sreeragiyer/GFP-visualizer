@@ -2,6 +2,10 @@ import {plotline} from './lineplot.js';
 
 let popout = document.getElementById("lp");
 let closebtn = document.getElementById("popoutclose");
+let barbackbtn = document.getElementById("backbar");
+let clickedCountry = "";
+let gfpdata = [];
+let pricedata = [];
 
 async function getData() {
     try {
@@ -67,6 +71,7 @@ function ready(error, data, gfpdata, pricedata) {
                 })
                 .on("click", function(d,i) {
                     popout.style = "display:flex";
+                    clickedCountry = i.name;
                     plotline(gfpdata, i.name)
                 });
 }
@@ -86,7 +91,7 @@ async function getMapData() {
 getData().then((data) => {
     if(data==null) 
         return;
-    let [gfpdata, pricedata] = data;
+    [gfpdata, pricedata] = data;
 
     getMapData().then((data) => {
         if(data==null)
@@ -100,5 +105,12 @@ getData().then((data) => {
 
 closebtn.addEventListener("click", (e) => {
     d3.selectAll("#lp > svg").remove(); 
+    barbackbtn.style.visibility = "hidden";
     popout.style = "display:none";
+});
+
+barbackbtn.addEventListener("click", (e) => {
+    d3.selectAll("#lp > svg").remove(); 
+    plotline(gfpdata, clickedCountry);
+    barbackbtn.style.visibility = "hidden";
 });

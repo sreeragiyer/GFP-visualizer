@@ -43,6 +43,19 @@ div.tooltip {
 .ptitle {
     float: left;
 }
-.closebtn {
+.closediv {
     float: right;
+}
+.backbtn {
+    visibility: hidden;
+}
+.bartopdiv {
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: fixed;
+    z-index: 2;
+    left: inherit;
+    top: inherit;
+    overflow: auto;
 }
