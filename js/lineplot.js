@@ -1,4 +1,4 @@
-import {plotbar} from './barplot.js'
+import {plotbar, plotLineBelowBar} from './barplot.js'
 
 export function plotline(gfpdata, countryName) {
     let countryData = gfpdata.filter(c => c["adm0_name"] == countryName)
@@ -27,6 +27,7 @@ function plotLineForCommodity(commData, commName) {
                 .attr("height", height + margin.top + margin.bottom)
                 .on("click", () => {
                     plotbar(commData, commName);
+                    plotLineBelowBar(commData, commName);
                 })
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
