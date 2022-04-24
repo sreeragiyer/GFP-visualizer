@@ -5,28 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="css/mystyle.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://d3js.org/topojson.v2.min.js"></script>
     <script src="https://d3js.org/d3-queue.v3.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
     <title>GFP Dashboard</title>
   </head>
   <body style="overflow: hidden;">
-    <div>
-    <h5>Global Food Prices Dashboard</h5>
-   <svg class="mapsvg" id="d3_demo" width="1200" height="560"></svg>
-   <div class="tooltip"></div>
-   <div id="lptotal">
-     <div class="lptopdiv">
-       <p class="ptitle" id="linep"></p>
-       <div class="closediv">
-          <button type="button" id="backbar" class="backbtn" aria-label="Back" value="Back"><span aria-hidden="true">&#8592;</span></button>
-          <button type="button" class="close" id="popoutclose" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        </div>
-        <hr class="divline"/>
-        <div class="lpdiv" id="lp"></div>
+
+<div class="container">
+  <h4>Global Food Prices Dashboard</h5>
+  <ul class="nav nav-pills">
+    <li class="active"><a data-toggle="pill" href="#map_tab">MAP</a></li>
+    <li><a data-toggle="pill" href="#table_tab">TABLE</a></li>
+  </ul>
+  
+  <div class="tab-content">
+    <div id="map_tab" class="tab-pane fade in active">
+  
+       <svg class="mapsvg" id="d3_demo" width="1200" height="560"></svg>
+       <div class="tooltip"></div>
+       <div id="lptotal">
+         <div class="lptopdiv">
+           <p class="ptitle" id="linep"></p>
+           <div class="closediv">
+              <button type="button" id="backbar" class="backbtn" aria-label="Back" value="Back"><span aria-hidden="true">&#8592;</span></button>
+              <button type="button" class="close" id="popoutclose" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <hr class="divline"/>
+            <div class="lpdiv" id="lp"></div>
+          </div>
+       </div>
+
       </div>
-   </div>
+    <div id="table_tab" class="tab-pane fade">
+      <h5>Global Commodity Stastics</h3>
+      <!--<svg class="global_commodity_svg" id="global_commodity_svg" width="1200" height="560"></svg>-->
+      <svg class="country_product_count" id="country_product_count" width="1200" height="560"></svg>
+    </div>
   </div>
+</div>
+
+
+
+
+
+
+
+
    <script type="module" src="js/barplot.js"></script>
    <script type="module" src="js/lineplot.js"></script>
    <script type="module" src="js/world_map.js"></script>

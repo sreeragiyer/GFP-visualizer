@@ -1,4 +1,5 @@
 import {plotline} from './lineplot.js';
+import {plotcommoditybar, plotfoodtypescountbar} from './commoditybarplot.js'
 
 let popout = document.getElementById("lptotal");
 let closebtn = document.getElementById("popoutclose");
@@ -74,6 +75,8 @@ function ready(error, data, gfpdata, pricedata) {
                     clickedCountry = i.name;
                     plotline(gfpdata, i.name)
                 });
+    //plotcommoditybar(gfpdata, "i.name")
+    plotfoodtypescountbar(gfpdata)
 }
 
 async function getMapData() {
