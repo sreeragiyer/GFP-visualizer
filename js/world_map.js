@@ -26,7 +26,7 @@ function ready(error, data, gfpdata, pricedata) {
     let [world, names] = data
     let margin = {top: 10, right: 10, bottom: 10, left: 10};
     let width = 960 - margin.left - margin.right;
-    let height = 500 - margin.top - margin.bottom;
+    let height = 520 - margin.top - margin.bottom;
     let projection = d3.geoNaturalEarth1()
                     .center([-50, 15]) 
                     .rotate([-9,0])

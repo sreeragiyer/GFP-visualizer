@@ -8,8 +8,11 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://d3js.org/topojson.v2.min.js"></script>
     <script src="https://d3js.org/d3-queue.v3.min.js"></script>
+    <title>GFP Dashboard</title>
   </head>
-  <body>
+  <body style="overflow: hidden;">
+    <div>
+    <h5>Global Food Prices Dashboard</h5>
    <svg class="mapsvg" id="d3_demo" width="1200" height="560"></svg>
    <div class="tooltip"></div>
    <div id="lptotal">
@@ -23,6 +26,7 @@
         <div class="lpdiv" id="lp"></div>
       </div>
    </div>
+  </div>
    <script type="module" src="js/barplot.js"></script>
    <script type="module" src="js/lineplot.js"></script>
    <script type="module" src="js/world_map.js"></script>
