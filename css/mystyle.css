@@ -5,6 +5,7 @@
     width: 100%;
     height: 100%;
     position: center;
+    background-color: #87CEEB;
 }
 .hidden {
       display: none;
@@ -19,35 +20,49 @@ div.tooltip {
       opacity: 0.9; 
       position: absolute;
 }
-.lpdiv {
+#lptotal {
     width: 80%;
     height: 80%;
     display: none;
+    border-radius: 2%;
+    border: 1px solid #ccc;
+    background-color: whitesmoke;
     position: fixed;
     z-index: 1;
     left: 5%;
     top: 5%;
+}
+.lpdiv {
+    width: 100%;
+    height: 90%;
+    display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    overflow: auto;
     justify-content: center;
-    background-color: greenyellow;
+    overflow: auto;
 }
 /* .lpdiv svg {
     width: 33%;
     height: 100%;
 } */
+.divline {
+    margin-top: 3%;
+}
 .lptopdiv {
     width: 100%;
+    margin-left: 1%;
+    margin-bottom: 1%;
 }
 .ptitle {
     float: left;
 }
 .closediv {
     float: right;
+    margin-right: 1%;
 }
 .backbtn {
     visibility: hidden;
+    border: none;
 }
 .bartopdiv {
     width: 100%;

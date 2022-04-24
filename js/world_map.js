@@ -1,6 +1,6 @@
 import {plotline} from './lineplot.js';
 
-let popout = document.getElementById("lp");
+let popout = document.getElementById("lptotal");
 let closebtn = document.getElementById("popoutclose");
 let barbackbtn = document.getElementById("backbar");
 let clickedCountry = "";
@@ -28,7 +28,7 @@ function ready(error, data, gfpdata, pricedata) {
     let width = 960 - margin.left - margin.right;
     let height = 500 - margin.top - margin.bottom;
     let projection = d3.geoNaturalEarth1()
-                    .center([0, 15]) 
+                    .center([-50, 15]) 
                     .rotate([-9,0])
                     .scale([1300/(2*Math.PI)]) 
                     .translate([450,300]);
@@ -124,11 +124,3 @@ document.addEventListener("keypress", (e) => {
             overlayrect.style = "display:none";
     }
 });
-
-// document.addEventListener("keyup", (e) => {
-//     if(e.key == "q") {
-//         let overlayrect = document.getElementById("overlayrect");
-//         if(overlayrect)
-//             overlayrect.style = "display:block";
-//     }
-// });

@@ -10,15 +10,17 @@
     <script src="https://d3js.org/d3-queue.v3.min.js"></script>
   </head>
   <body>
-   <svg class="mapsvg" id="d3_demo" width="1200" height="900"></svg>
+   <svg class="mapsvg" id="d3_demo" width="1200" height="560"></svg>
    <div class="tooltip"></div>
-   <div class="lpdiv" id="lp">
+   <div id="lptotal">
      <div class="lptopdiv">
        <p class="ptitle" id="linep"></p>
        <div class="closediv">
-          <input id="backbar" class="backbtn" type="button" value="Back" />
-          <input id="popoutclose" type="button" value="X" />
+          <button type="button" id="backbar" class="backbtn" aria-label="Back" value="Back"><span aria-hidden="true">&#8592;</span></button>
+          <button type="button" class="close" id="popoutclose" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
+        <hr class="divline"/>
+        <div class="lpdiv" id="lp"></div>
       </div>
    </div>
    <script type="module" src="js/barplot.js"></script>
