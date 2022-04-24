@@ -26,6 +26,7 @@ export function plotbar(commData, commName) {
                     .append("svg")
                         .attr("width", width + margin.left + margin.right)
                         .attr("height", height + margin.top + margin.bottom)
+                        .attr("id", "bpsvg")
                     .append("g")
                         .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
@@ -111,11 +112,12 @@ export function plotLineBelowBar(commData, commName) {
         // If no selection, back to initial coordinate. Otherwise, update X axis domain
         if(!extent){
             if (!idleTimeout) return idleTimeout = setTimeout(idled, 350); // This allows to wait a little bit
-            x.domain([ 4,8])
+            x.domain([ 4,8]);
         }
         else{
-            x.domain([ x.invert(extent[0]), x.invert(extent[1]) ])
-            svg.select(".brush").call(brush.move, null) // This remove the grey brush area as soon as the selection has been done
+            x.domain([ x.invert(extent[0]), x.invert(extent[1]) ]);
+            redrawBarPlot(commData, [ x.invert(extent[0]), x.invert(extent[1]) ], commName);
+            svg.select(".brush").call(brush.move, null); // This remove the grey brush area as soon as the selection has been done
         }
 
         // Update axis and line position
@@ -135,7 +137,23 @@ export function plotLineBelowBar(commData, commName) {
                     .on("end", updateChart);
               
     svg.append('g')
-        .attr("clip-path", "url(#clip)")
+        .attr("clip-path", "url(#clip)");
+
+    svg.append("g")
+        .attr("class", "brush")
+        .call(brush);
+    
+    svg.on("dblclick", function() {
+        x.domain(d3.extent(commDataAvg, function(d) { return d["date"]; }));
+        redrawBarPlot(commData, d3.extent(commDataAvg, function(d) { return d["date"]; }), commName);
+        xAxisCall.transition().call(d3.axisBottom(x).tickFormat(d3.timeFormat("%m/%y")));
+        svg.select('.line')
+            .transition()
+            .attr("d", d3.line()
+                .x(function(d) { return x(d["date"]) })
+                .y(function(d) { return y(d["mp_price"]) })
+            );
+    });
 
     svg.append("path")
         .datum(commDataAvg)
@@ -148,21 +166,126 @@ export function plotLineBelowBar(commData, commName) {
           .y(function(d) { return y(d["mp_price"]) })
         );
 
-        
+    let focus = svg.append("g")
+                    .attr("class", "focus")
+                    .style("display", "none");
+
+    focus.append("circle")
+            .attr("r", 5);
+
+    focus.append("rect")
+            .attr("class", "tooltip-lp")
+            .attr("width", 100)
+            .attr("height", 50)
+            .attr("x", 10)
+            .attr("y", -22)
+            .attr("rx", 4)
+            .attr("ry", 4);
+
+    focus.append("text")
+            .attr("class", "tooltip-date")
+            .attr("x", 18)
+            .attr("y", -2);
+
+    focus.append("text")
+            .attr("x", 18)
+            .attr("y", 18)
+            .text("Price:$");
+
+    focus.append("text")
+            .attr("class", "tooltip-likes")
+            .attr("x", 60)
+            .attr("y", 18);
+
+    let bisectDate = d3.bisector(function(d) { return d["date"]; }).left;
+    let dateFormatter = d3.timeFormat("%m/%y");
+    function mousemove(e) {
+        let x0 = x.invert(d3.pointer(e)[0]);
+        // console.log(e.target, x.invert(e.layerY))
+        // console.log("point")
+        // console.log(d3.pointer(e))
+        let i = bisectDate(commDataAvg, x0, 1);
+        let d0 = commDataAvg[i - 1];
+        let d1 = commDataAvg[i];
+        let d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+        focus.attr("transform", "translate(" + x(d["date"]) + "," + y(d["mp_price"]) + ")");
+        focus.select(".tooltip-date").text(dateFormatter(d["date"]));
+        focus.select(".tooltip-likes").text(parseFloat(d["mp_price"]).toFixed(2));
+    }
+
+    svg.append("rect")
+        .attr("class", "overlay")
+        .attr("id", "overlayrect")
+        .attr("width", width)
+        .attr("height", height)
+        .on("mouseover", function() { focus.style("display", null); })
+        .on("mouseout", function() { focus.style("display", "none"); })
+        .on("mousemove", mousemove)
+        .on("keydown", (d) => {
+            console.log("md", d)
+            let currel = d3.select(".overlay");
+            currel.style("display", "none");
+        })
+        .on("keyup", (d) => {
+            console.log("mu", d)
+            let currel = d3.select(".overlay");
+            currel.style("display", null);
+        });
+}
+
+function redrawBarPlot(commDataOg, dates, commName) {
+    d3.selectAll("#bpsvg > *").remove();
+    let stdate = new Date(dates[0]);
+    let endate = new Date(dates[1]);
+    let commData = $.extend(true, [], commDataOg); 
+    commData = commData.filter(m => (new Date(m["date"])) >= stdate && (new Date(m["date"])) <= endate );
+    let marketNames = Array.from(new Set(commData.map(c => c["adm1_name"])));
+    let plotData = [];
+    for(let i=0;i<marketNames.length;i++) {
+        let marketData = commData.filter(c => c["adm1_name"] == marketNames[i]);
+        let plotObj = {};
+        plotObj["mname"] = marketNames[i];
+        plotObj["mp_price"] = d3.mean(marketData.map(m => parseFloat(m["mp_price"]))).toFixed(2);
+        plotData.push(plotObj);
+    }
+    plotData.sort((b,a) => a["mp_price"] - b["mp_price"]);
+    const margin = {top: 15, right: 15, bottom: 50, left: 30},
+    width = 840 - margin.left - margin.right,
+    height = 180 - margin.top - margin.bottom;
+    const x = d3.scaleBand()
+                .range([ 0, width ])
+                .domain(plotData.map(d => d["mname"]))
+                .padding(0.4);
+    const y = d3.scaleLinear()
+                .domain([d3.min(plotData, d => parseFloat(d["mp_price"])), d3.max(plotData, d => parseFloat(d["mp_price"]))])
+                .range([ height, 0]);
+
+    let svg = d3.select("#bpsvg")
+                .append("g")
+                .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
     svg.append("g")
-        .attr("class", "brush")
-        .call(brush);
-    
-    svg.on("dblclick",function() {
-        x.domain(d3.extent(commDataAvg, function(d) { return d["date"]; }));
-        xAxisCall.transition().call(d3.axisBottom(x).tickFormat(d3.timeFormat("%m/%y")));
-        svg.select('.line')
-            .transition()
-            .attr("d", d3.line()
-                .x(function(d) { return x(d["date"]) })
-                .y(function(d) { return y(d["mp_price"]) })
-            );
-    });
+        .attr("transform", `translate(0, ${height})`)
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+        .attr("transform", "translate(-10,0)rotate(-45)")
+        .style("text-anchor", "end");
+
+    svg.append("g")
+        .call(d3.axisLeft(y));
+
+    svg.selectAll("mybar")
+        .data(plotData)
+        .enter()
+        .append("rect")
+            .attr("x", d => x(d["mname"]))
+            .attr("y", d => y(d["mp_price"]))
+            .attr("width", x.bandwidth())
+            .attr("height", d => height - y(d["mp_price"]))
+            .attr("fill", defaultBarColor)
+            .on("click", (d,i) => {
+                filterByMarket(commData, commName, i["mname"], d);
+            });
 
 }
 

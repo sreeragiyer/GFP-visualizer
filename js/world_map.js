@@ -114,3 +114,21 @@ barbackbtn.addEventListener("click", (e) => {
     plotline(gfpdata, clickedCountry);
     barbackbtn.style.visibility = "hidden";
 });
+
+document.addEventListener("keypress", (e) => {
+    if(e.key == "q") {
+        let overlayrect = document.getElementById("overlayrect");
+        if(overlayrect && overlayrect.style.display == "none")
+            overlayrect.style = "display:block";
+        else if(overlayrect)
+            overlayrect.style = "display:none";
+    }
+});
+
+// document.addEventListener("keyup", (e) => {
+//     if(e.key == "q") {
+//         let overlayrect = document.getElementById("overlayrect");
+//         if(overlayrect)
+//             overlayrect.style = "display:block";
+//     }
+// });
