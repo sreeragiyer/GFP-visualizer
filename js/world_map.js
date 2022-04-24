@@ -25,6 +25,7 @@ async function getData() {
 function ready(error, data, gfpdata, pricedata) {
     if (error) throw error;
     let [world, names] = data
+    let uniqueCountryNames =  Array.from(new Set(gfpdata.map(c => c["adm0_name"])));
     let margin = {top: 10, right: 10, bottom: 10, left: 10};
     let width = 960 - margin.left - margin.right;
     let height = 520 - margin.top - margin.bottom;
@@ -54,7 +55,11 @@ function ready(error, data, gfpdata, pricedata) {
                 .attr("fill", "white")
                 .attr("d", path )
                 .on("mouseover",function(d,i){
-                    d3.select(this).attr("fill","grey").attr("stroke-width",2);
+                    let currCountry = uniqueCountryNames.find(c => c == i.name);
+                    if(currCountry) {
+                        d3.select(this).style("cursor", "pointer");
+                        d3.select(this).attr("fill","grey").attr("stroke-width",2);
+                    }
                     return tooltip.style("hidden", false).html(i.name);
                 })
                 .on("mousemove",function(d,i){
@@ -67,6 +72,7 @@ function ready(error, data, gfpdata, pricedata) {
                         .html(healthHtml);
                 })
                 .on("mouseout",function(d,i){
+                    d3.select(this).style("cursor", null);
                     d3.select(this).attr("fill","white").attr("stroke-width",1);
                     tooltip.classed("hidden", true);
                 })

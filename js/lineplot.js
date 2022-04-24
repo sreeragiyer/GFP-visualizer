@@ -12,7 +12,7 @@ export function plotline(gfpdata, countryName) {
 }
 
 function plotLineForCommodity(commData, commName) {
-    let margin = {top: 10, right: 10, bottom: 30, left: 30};
+    let margin = {top: 10, right: 10, bottom: 30, left: 60};
     let width = 230 - margin.left - margin.right;
     let height = 200 - margin.top - margin.bottom;
     let x = d3.scaleTime()
@@ -30,6 +30,14 @@ function plotLineForCommodity(commData, commName) {
                     plotbar(commData, commName);
                     plotLineBelowBar(commData, commName);
                 })
+                .on("mouseover", (d) => {
+                    d.stopPropagation();
+                    d.target.style.cursor = "pointer";
+                })
+                .on("mouseout", (d) => {
+                    d.stopPropagation();
+                    d.target.style.cursor = null;
+                })
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     let dgrp = []
@@ -43,6 +51,7 @@ function plotLineForCommodity(commData, commName) {
     }
     let commDataAvg = dgrp.map(g => ({"date": g[0]["date"], "mp_price": g.map(c => parseFloat(c["mp_price"])).reduce((a,b) => a+b,0).toFixed(2)/g.length}));
     let xAxis = d3.axisBottom(x).ticks(3).tickFormat(d3.timeFormat("%m/%y"));
+    let displayCommName = commName.length > 28 ? commName.slice(0,29)+"..." : commName;
     svg.append("g")
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis);
@@ -53,7 +62,7 @@ function plotLineForCommodity(commData, commName) {
         .attr("y", 0 - (margin.top / 8))
         .attr("text-anchor", "middle")  
         .style("font-size", "12px") 
-        .text(commName);
+        .text(displayCommName);
     svg.append("path")
         .datum(commDataAvg)
         .attr("fill", "none")

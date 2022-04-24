@@ -17,7 +17,7 @@ export function plotbar(commData, commName) {
         plotData.push(plotObj);
     }
     plotData.sort((b,a) => a["mp_price"] - b["mp_price"]);
-    const margin = {top: 15, right: 15, bottom: 50, left: 30},
+    const margin = {top: 15, right: 15, bottom: 50, left: 60},
     width = 840 - margin.left - margin.right,
     height = 180 - margin.top - margin.bottom;
 
@@ -56,13 +56,34 @@ export function plotbar(commData, commName) {
             .attr("width", x.bandwidth())
             .attr("height", d => height - y(d["mp_price"]))
             .attr("fill", defaultBarColor)
+            .on("mouseover", function(d,i) {
+                    let textEl = document.getElementById(i["mname"].replace(/\s+/g, '-')+"-text");
+                    textEl.style.display = null;
+                    d.target.style.cursor = "pointer";
+                })
+            .on("mouseout", function(d,i) { 
+                    let textEl = document.getElementById(i["mname"].replace(/\s+/g, '-')+"-text");
+                    textEl.style.display = "none";
+                    d.target.style.cursor = null;
+                })
             .on("click", (d,i) => {
                 filterByMarket(commData, commName, i["mname"], d);
             });
+
+    svg.selectAll("text.mybar")
+        .data(plotData)
+        .enter().append("text")
+            .attr("text-anchor", "middle")
+            .attr("id", (d) => d["mname"].replace(/\s+/g, '-')+"-text")
+            .style("font-size", "0.9em")
+            .style("display", "none")
+            .attr("x", function(d) {return x(d["mname"]); })
+            .attr("y", function(d) { return y(d["mp_price"]) - 5; })
+            .text(function(d) { return d["mp_price"]; });
 }
 
 export function plotLineBelowBar(commData, commName) {
-    let margin = {top: 10, right: 15, bottom: 30, left: 30};
+    let margin = {top: 10, right: 15, bottom: 30, left: 60};
     let width = 840 - margin.left - margin.right;
     let height = 240 - margin.top - margin.bottom;
     let x = d3.scaleTime()
@@ -175,7 +196,7 @@ export function plotLineBelowBar(commData, commName) {
 
     focus.append("rect")
             .attr("class", "tooltip-lp")
-            .attr("width", 100)
+            .attr("width", 180)
             .attr("height", 50)
             .attr("x", 10)
             .attr("y", -22)
@@ -190,7 +211,7 @@ export function plotLineBelowBar(commData, commName) {
     focus.append("text")
             .attr("x", 18)
             .attr("y", 18)
-            .text("Price:$");
+            .text("Price: ");
 
     focus.append("text")
             .attr("class", "tooltip-likes")
@@ -210,7 +231,7 @@ export function plotLineBelowBar(commData, commName) {
         let d = x0 - d0.date > d1.date - x0 ? d1 : d0;
         focus.attr("transform", "translate(" + x(d["date"]) + "," + y(d["mp_price"]) + ")");
         focus.select(".tooltip-date").text(dateFormatter(d["date"]));
-        focus.select(".tooltip-likes").text(parseFloat(d["mp_price"]).toFixed(2));
+        focus.select(".tooltip-likes").text(parseFloat(d["mp_price"]).toFixed(2)+" (local curr.)");
     }
 
     svg.append("rect")
@@ -220,17 +241,17 @@ export function plotLineBelowBar(commData, commName) {
         .attr("height", height)
         .on("mouseover", function() { focus.style("display", null); })
         .on("mouseout", function() { focus.style("display", "none"); })
-        .on("mousemove", mousemove)
-        .on("keydown", (d) => {
-            console.log("md", d)
-            let currel = d3.select(".overlay");
-            currel.style("display", "none");
-        })
-        .on("keyup", (d) => {
-            console.log("mu", d)
-            let currel = d3.select(".overlay");
-            currel.style("display", null);
-        });
+        .on("mousemove", mousemove);
+        // .on("keydown", (d) => {
+        //     console.log("md", d)
+        //     let currel = d3.select(".overlay");
+        //     currel.style("display", "none");
+        // })
+        // .on("keyup", (d) => {
+        //     console.log("mu", d)
+        //     let currel = d3.select(".overlay");
+        //     currel.style("display", null);
+        // });
 }
 
 function redrawBarPlot(commDataOg, dates, commName) {
