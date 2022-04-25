@@ -1,15 +1,18 @@
 export function plotcommoditybar(gfpdata) {
 
-    let commNames =  Array.from(new Set(gfpdata.map(c => c["cm_name"])));
+	let commCountsObj = {};
+	for(let i=0;i<gfpdata.length;i++) {
+		let commName = gfpdata[i]["cm_name"];
+		commCountsObj[commName] = commCountsObj[commName] ? commCountsObj[commName] + 1 : 1;
+	}
 
-    let commData = []
-    for(let i=0;i<commNames.length;i++) {
-        let currCommData = gfpdata.filter(c => c["cm_name"] == commNames[i]);
-        let plotObj = {};
-        plotObj["commodity_name"] = commNames[i];
-        plotObj["commodity_count"] = currCommData.length;
-        commData.push(plotObj)
-    }
+    let commData = [];
+	for(let commName in commCountsObj) {
+		let plotObj = {};
+        plotObj["commodity_name"] = commName;
+        plotObj["commodity_count"] = commCountsObj[commName];
+        commData.push(plotObj);
+	}
 	
 	commData.sort(function(b, a) {
 	    return a["commodity_count"] - b["commodity_count"];
@@ -65,7 +68,18 @@ export function plotcommoditybar(gfpdata) {
 
 export function plotfoodtypescountbar(gfpdata) {
 	let countryNames =  Array.from(new Set(gfpdata.map(c => c["adm0_name"])));
-	let countryData = []
+	// let countryCountsObj = {};
+	// for(let i=0;i<gfpdata.length;i++) {
+	// 	let cname = gfpdata[i]["adm0_name"];
+	// 	countryCountsObj[cname] = countryCountsObj[cname] ? countryCountsObj[cname]+1 : 1;
+	// }
+	let countryData = [];
+	// for(let cname in countryCountsObj) {
+	// 	let plotObj = {};
+    //     plotObj["country_name"] = cname;
+    //     plotObj["num_product_types"] = countryCountsObj[cname];
+    //     countryData.push(plotObj);
+	// }
     for(let i=0;i<countryNames.length;i++) {
         let currCountryData = gfpdata.filter(c => c["adm0_name"] == countryNames[i]);
         let commNames =  Array.from(new Set(currCountryData.map(c => c["cm_name"])));

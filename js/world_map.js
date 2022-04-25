@@ -10,6 +10,8 @@ let zoombtn =  document.getElementById("zoombtn");
 let searchbtn = document.getElementById("searchbtn");
 let searchbar = document.getElementById("csearch");
 let boxplotbtn = document.getElementById("boxbtn");
+let boxdiv = document.getElementById("box");
+let lpdiv = document.getElementById("lp");
 
 let clickedCountry = "";
 let gfpdata = [];
@@ -92,9 +94,7 @@ function ready(error, data, gfpdata, pricedata) {
                     clickedCountry = i.name;
                     plotline(gfpdata, i.name)
                 });
-    plotcommoditybar(gfpdata);
-    document.getElementById("global_commodity_svg").style.display = "none";
-    plotfoodtypescountbar(gfpdata);
+
 }
 
 async function getMapData() {
@@ -122,12 +122,15 @@ getData().then((data) => {
 
     });
     plotsharepercent(sharedata);
+    plotcommoditybar(gfpdata);
+    document.getElementById("country_product_count").style.display = "none";
+    plotfoodtypescountbar(gfpdata);
 
 });
 
 closebtn.addEventListener("click", (e) => {
     d3.selectAll("#lp > svg").remove(); 
-    $('#lp').empty();
+    boxdiv.style.display = "none";
     barbackbtn.style.visibility = "hidden";
     boxplotbtn.style.visibility = "visible";
     popout.style = "display:none";
@@ -136,7 +139,8 @@ closebtn.addEventListener("click", (e) => {
 
 boxplotbtn.addEventListener("click", (e) => {
     d3.selectAll("#lp > svg").remove(); 
-    $('#lp').empty();
+    lpdiv.style.display = "none";
+    boxdiv.style.display = "flex";
     plotbox(gfpdata, clickedCountry);
     boxplotbtn.style.visibility = "hidden";
 });
@@ -145,7 +149,8 @@ boxplotbtn.addEventListener("click", (e) => {
 barbackbtn.addEventListener("click", (e) => {
     d3.selectAll("#lp > svg").remove(); 
     zoombtn.style.display = "none";
-    $('#lp').empty();
+    boxdiv.style.display = "none";
+    lpdiv.style.display = "flex";
     plotline(gfpdata, clickedCountry);
     barbackbtn.style.visibility = "hidden";
     boxplotbtn.style.visibility = "visible";

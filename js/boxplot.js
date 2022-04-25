@@ -40,6 +40,6 @@ function plotboxplotforcountry(plotData) {
 	  title: 'Box Plot'
 	};
 
-	Plotly.newPlot('lp', boxPlotData, layout);
+	Plotly.newPlot('box', boxPlotData, layout);
 
 }
