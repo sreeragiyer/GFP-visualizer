@@ -4,6 +4,7 @@ import {plotcommoditybar, plotfoodtypescountbar} from './commoditybarplot.js'
 let popout = document.getElementById("lptotal");
 let closebtn = document.getElementById("popoutclose");
 let barbackbtn = document.getElementById("backbar");
+let zoombtn =  document.getElementById("zoombtn");
 let clickedCountry = "";
 let gfpdata = [];
 let pricedata = [];
@@ -116,12 +117,22 @@ closebtn.addEventListener("click", (e) => {
     d3.selectAll("#lp > svg").remove(); 
     barbackbtn.style.visibility = "hidden";
     popout.style = "display:none";
+    zoombtn.style.display = "none";
 });
 
 barbackbtn.addEventListener("click", (e) => {
     d3.selectAll("#lp > svg").remove(); 
+    zoombtn.style.display = "none";
     plotline(gfpdata, clickedCountry);
     barbackbtn.style.visibility = "hidden";
+});
+
+zoombtn.addEventListener("click", (e) => {
+    let overlayrect = document.getElementById("overlayrect");
+    if(overlayrect && overlayrect.style.display == "none")
+        overlayrect.style = "display:block";
+    else if(overlayrect)
+        overlayrect.style = "display:none";
 });
 
 document.addEventListener("keypress", (e) => {

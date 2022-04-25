@@ -6,6 +6,7 @@ let selectedMkt = "";
 export function plotbar(commData, commName) {
     let backbtn = document.getElementById("backbar");
     backbtn.style.visibility = "visible";
+    document.getElementById("zoombtn").style.display = "block";
     d3.selectAll("#lp > svg").remove(); 
     commDataFull = $.extend(true, [], commData); 
     let countryName = commData[0]["adm0_name"];

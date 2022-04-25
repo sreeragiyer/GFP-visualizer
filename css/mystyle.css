@@ -47,10 +47,12 @@ div.tooltip {
     justify-content: center;
     overflow: auto;
 }
-/* .lpdiv svg {
-    width: 33%;
-    height: 100%;
-} */
+.zoomtype {
+    position: absolute;
+    top: 33vh;
+    left: 71vw;
+    display: none;
+}
 .divline {
     margin-top: 3%;
     background-color: #b2beb5;
