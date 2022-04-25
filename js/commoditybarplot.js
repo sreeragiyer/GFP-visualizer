@@ -1,4 +1,4 @@
-export function plotcommoditybar(gfpdata, countryName) {
+export function plotcommoditybar(gfpdata) {
 
     let commNames =  Array.from(new Set(gfpdata.map(c => c["cm_name"])));
 

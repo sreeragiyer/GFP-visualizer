@@ -1,6 +1,7 @@
 import {plotline} from './lineplot.js';
 import {plotcommoditybar, plotfoodtypescountbar} from './commoditybarplot.js';
 import {plotsharepercent, addCountry} from './shareplot.js';
+import {plotbox} from './boxplot.js';
 
 let popout = document.getElementById("lptotal");
 let closebtn = document.getElementById("popoutclose");
@@ -87,10 +88,12 @@ function ready(error, data, gfpdata, pricedata) {
                 .on("click", function(d,i) {
                     popout.style = "display:flex";
                     clickedCountry = i.name;
+                    document.getElementById("linep").innerText = `Food prices trends in ${i.name}`;
                     plotline(gfpdata, i.name)
+                    plotbox(gfpdata, i.name)
                 });
-    //plotcommoditybar(gfpdata, "i.name")
-    plotfoodtypescountbar(gfpdata)
+    plotcommoditybar(gfpdata)
+    //plotfoodtypescountbar(gfpdata)
 }
 
 async function getMapData() {
@@ -126,6 +129,13 @@ closebtn.addEventListener("click", (e) => {
     barbackbtn.style.visibility = "hidden";
     popout.style = "display:none";
     zoombtn.style.display = "none";
+});
+
+
+closebtn.addEventListener("click", (e) => {
+    d3.selectAll("#lp > svg").remove(); 
+    barbackbtn.style.visibility = "hidden";
+    popout.style = "display:none";
 });
 
 barbackbtn.addEventListener("click", (e) => {

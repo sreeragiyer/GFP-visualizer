@@ -9,9 +9,9 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://d3js.org/topojson.v2.min.js"></script>
     <script src="https://d3js.org/d3-queue.v3.min.js"></script>
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src='https://cdn.plot.ly/plotly-2.11.1.min.js'></script>
     <title>GFP Dashboard</title>
   </head>
   <body style="overflow: hidden;">
@@ -21,8 +21,8 @@
   <h4 class="titletext">Global Food Prices Dashboard</h4>
   <ul class="nav nav-pills">
     <li class="active navele"><a data-toggle="pill" href="#map_tab">MAP</a></li>
-    <li class="navele"><a data-toggle="pill" href="#table_tab">TABLE</a></li>
     <li class="navele"><a data-toggle="pill" href="#healthtab">HEALTHY DIET STATS</a></li>
+    <li class="navele"><a data-toggle="pill" href="#table_tab">CHARTS</a></li>
   </ul>
   </div>
   
@@ -48,11 +48,6 @@
        </div>
 
       </div>
-    <div id="table_tab" class="tab-pane fade">
-      <h5>Global Commodity Stastics</h3>
-      <!--<svg class="global_commodity_svg" id="global_commodity_svg" width="1200" height="560"></svg>-->
-      <svg class="country_product_count" id="country_product_count" width="1200" height="560"></svg>
-    </div>
     <div id="healthtab" class="tab-pane fade">
       <h5>Share (in percent) that cannot afford a healthy diet</h3>
       <div class="input-group searchdiv">
@@ -62,14 +57,28 @@
       <p class="alert alert-danger myerror" id="cerrormsg">No data for country!</p>
       <div id="healthydiet"></div>
     </div>
+    <div id="table_tab" class="tab-pane fade">
+      <div class="char_title_bar"> 
+        <h5>Global Commodity Stastics</h3>
+
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Global Statistics
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="#">Commodity Stastics</a>
+            <a class="dropdown-item" href="#">Food Product Stastics</a>
+          </div>
+        </div>
+
+      </div>
+      <svg class="global_commodity_svg" id="global_commodity_svg" width="1200" height="560"></svg>
+      <!--<svg class="country_product_count" id="country_product_count" width="1200" height="560"></svg>-->
+
+
+   </div>
   </div>
 </div>
-
-
-
-
-
-
 
 
    <script type="module" src="js/barplot.js"></script>
@@ -78,8 +87,5 @@
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-   <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script> -->
   </body>
 </html>
