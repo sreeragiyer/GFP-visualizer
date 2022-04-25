@@ -9,6 +9,8 @@ let barbackbtn = document.getElementById("backbar");
 let zoombtn =  document.getElementById("zoombtn");
 let searchbtn = document.getElementById("searchbtn");
 let searchbar = document.getElementById("csearch");
+let boxplotbtn = document.getElementById("boxbtn");
+
 let clickedCountry = "";
 let gfpdata = [];
 let pricedata = [];
@@ -88,12 +90,11 @@ function ready(error, data, gfpdata, pricedata) {
                 .on("click", function(d,i) {
                     popout.style = "display:flex";
                     clickedCountry = i.name;
-                    document.getElementById("linep").innerText = `Food prices trends in ${i.name}`;
                     plotline(gfpdata, i.name)
-                    plotbox(gfpdata, i.name)
                 });
-    plotcommoditybar(gfpdata)
-    //plotfoodtypescountbar(gfpdata)
+    plotcommoditybar(gfpdata);
+    document.getElementById("global_commodity_svg").style.display = "none";
+    plotfoodtypescountbar(gfpdata);
 }
 
 async function getMapData() {
@@ -126,23 +127,28 @@ getData().then((data) => {
 
 closebtn.addEventListener("click", (e) => {
     d3.selectAll("#lp > svg").remove(); 
+    $('#lp').empty();
     barbackbtn.style.visibility = "hidden";
+    boxplotbtn.style.visibility = "visible";
     popout.style = "display:none";
     zoombtn.style.display = "none";
 });
 
-
-closebtn.addEventListener("click", (e) => {
+boxplotbtn.addEventListener("click", (e) => {
     d3.selectAll("#lp > svg").remove(); 
-    barbackbtn.style.visibility = "hidden";
-    popout.style = "display:none";
+    $('#lp').empty();
+    plotbox(gfpdata, clickedCountry);
+    boxplotbtn.style.visibility = "hidden";
 });
+
 
 barbackbtn.addEventListener("click", (e) => {
     d3.selectAll("#lp > svg").remove(); 
     zoombtn.style.display = "none";
+    $('#lp').empty();
     plotline(gfpdata, clickedCountry);
     barbackbtn.style.visibility = "hidden";
+    boxplotbtn.style.visibility = "visible";
 });
 
 zoombtn.addEventListener("click", (e) => {
@@ -162,6 +168,23 @@ searchbar.addEventListener("keypress", (e) => {
     if(e.key == "Enter") {
         addCountry(e.target.value, sharedata);
     }
+});
+
+$(function() {
+    $("#global_stastics").change(function() {
+        let selected_val = $('option:selected', this).text();
+        console.log(selected_val);
+        if (selected_val=="Top Food Product Types") {
+            //$('#country_product_count').hide(); // $('#country_product_count').empty();
+            document.getElementById("country_product_count").style.display = "none";
+            document.getElementById("global_commodity_svg").style.display = "block";
+            //$('#global_commodity_svg').style.visibility = "visible";    //plotcommoditybar(gfpdata);
+        } else if(selected_val=="Top Countries With Most Food Product Types") {
+            document.getElementById("country_product_count").style.display = "block";
+            document.getElementById("global_commodity_svg").style.display = "none";
+            //$('#country_product_count').style.visibility = "visible";  //plotfoodtypescountbar(gfpdata);
+        }
+    });
 });
 
 document.addEventListener("keypress", (e) => {

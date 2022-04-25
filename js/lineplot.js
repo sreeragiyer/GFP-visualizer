@@ -1,6 +1,8 @@
 import {plotbar, plotLineBelowBar} from './barplot.js'
 
 export function plotline(gfpdata, countryName) {
+    document.getElementById("linep").innerText = `Food prices trends in ${countryName}`;
+                    
     let countryData = gfpdata.filter(c => c["adm0_name"] == countryName)
     countryData = countryData.map(countryObj => ({...countryObj, "date": d3.timeParse("%Y-%m")(countryObj["mp_year"]+"-"+countryObj["mp_month"])}));
     let commNames =  Array.from(new Set(countryData.map(c => c["cm_name"])));

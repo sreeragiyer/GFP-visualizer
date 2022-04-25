@@ -5,6 +5,8 @@ let selectedMkt = "";
 
 export function plotbar(commData, commName) {
     let backbtn = document.getElementById("backbar");
+    let boxplotbtn = document.getElementById("boxbtn");
+    boxplotbtn.style.visibility = "hidden";
     backbtn.style.visibility = "visible";
     document.getElementById("zoombtn").style.display = "block";
     d3.selectAll("#lp > svg").remove(); 

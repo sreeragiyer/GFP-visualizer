@@ -1,12 +1,12 @@
 export function plotbox(gfpdata, countryName) {
+    
+    let backbtn = document.getElementById("backbar");
+    backbtn.style.visibility = "visible";
+    d3.selectAll("#lp > svg").remove(); 
+    document.getElementById("linep").innerText = `Box Plot of food prices across months in ${countryName}`;
+    
     let countryData = gfpdata.filter(c => c["adm0_name"] == countryName)
     
-
-
-    //countryData = countryData.map(countryObj => ({...countryObj, "date": d3.timeParse("%Y-%m")(countryObj["mp_year"]+"-"+countryObj["mp_month"])}));
-   // let commNames =  Array.from(new Set(countryData.map(c => c["cm_name"])));
-    //document.getElementById("linep").innerText = `Food prices trends in ${countryName}`;
-
     let plotData = [];
     for(let i=1;i<=12;i++) {
         let marketData = countryData.filter(c => c["mp_month"] ==i);
@@ -40,6 +40,6 @@ function plotboxplotforcountry(plotData) {
 	  title: 'Box Plot'
 	};
 
-	Plotly.newPlot('box', boxPlotData, layout);
+	Plotly.newPlot('lp', boxPlotData, layout);
 
 }
