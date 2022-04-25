@@ -114,6 +114,7 @@ export function plotLineBelowBar(commData, commName) {
             }
         }
     }
+    let currCode = commData[0]["cur_name"];
     let commDataAvg = dgrp.map(g => ({"date": g[0]["date"], "mp_price": g.map(c => parseFloat(c["mp_price"])).reduce((a,b) => a+b,0).toFixed(2)/g.length}));
     let xAxis = d3.axisBottom(x).tickFormat(d3.timeFormat("%m/%y"));
     let xAxisCall = svg.append("g")
@@ -202,7 +203,7 @@ export function plotLineBelowBar(commData, commName) {
 
     focus.append("rect")
             .attr("class", "tooltip-lp")
-            .attr("width", 180)
+            .attr("width", 140)
             .attr("height", 50)
             .attr("x", 10)
             .attr("y", -22)
@@ -232,9 +233,10 @@ export function plotLineBelowBar(commData, commName) {
         let d0 = commDataAvg[i - 1];
         let d1 = commDataAvg[i];
         let d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+        console.log(d)
         focus.attr("transform", "translate(" + x(d["date"]) + "," + y(d["mp_price"]) + ")");
         focus.select(".tooltip-date").text(dateFormatter(d["date"]));
-        focus.select(".tooltip-likes").text(parseFloat(d["mp_price"]).toFixed(2)+" (local curr.)");
+        focus.select(".tooltip-likes").text(parseFloat(d["mp_price"]).toFixed(2)+" "+currCode);
     }
 
     svg.append("rect")
