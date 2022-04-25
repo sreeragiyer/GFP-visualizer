@@ -233,7 +233,6 @@ export function plotLineBelowBar(commData, commName) {
         let d0 = commDataAvg[i - 1];
         let d1 = commDataAvg[i];
         let d = x0 - d0.date > d1.date - x0 ? d1 : d0;
-        console.log(d)
         focus.attr("transform", "translate(" + x(d["date"]) + "," + y(d["mp_price"]) + ")");
         focus.select(".tooltip-date").text(dateFormatter(d["date"]));
         focus.select(".tooltip-likes").text(parseFloat(d["mp_price"]).toFixed(2)+" "+currCode);
