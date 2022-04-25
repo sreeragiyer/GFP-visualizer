@@ -1,19 +1,26 @@
 import {plotline} from './lineplot.js';
-import {plotcommoditybar, plotfoodtypescountbar} from './commoditybarplot.js'
+import {plotcommoditybar, plotfoodtypescountbar} from './commoditybarplot.js';
+import {plotsharepercent, addCountry} from './shareplot.js';
 
 let popout = document.getElementById("lptotal");
 let closebtn = document.getElementById("popoutclose");
 let barbackbtn = document.getElementById("backbar");
 let zoombtn =  document.getElementById("zoombtn");
+let searchbtn = document.getElementById("searchbtn");
+let searchbar = document.getElementById("csearch");
 let clickedCountry = "";
 let gfpdata = [];
 let pricedata = [];
+let sharedata = [];
 
 async function getData() {
     try {
-        let gfpdata = await d3.csv("https://raw.githubusercontent.com/sreeragiyer/GFP-visualizer/main/data/gfp_sampled.csv");
-        let pricedata = await d3.csv("https://raw.githubusercontent.com/sreeragiyer/GFP-visualizer/main/data/food-prices.csv");
-        return [gfpdata, pricedata];
+        let gfpPromise = d3.csv("https://raw.githubusercontent.com/sreeragiyer/GFP-visualizer/main/data/gfp_sampled.csv");
+        let pricePromise = d3.csv("https://raw.githubusercontent.com/sreeragiyer/GFP-visualizer/main/data/food-prices.csv");
+        let sharePromise = d3.csv("https://raw.githubusercontent.com/sreeragiyer/GFP-visualizer/main/data/share-healthy-diet-unaffordable.csv");
+        const data_2 = await Promise.all([gfpPromise, pricePromise, sharePromise]);
+        let [gfpdata, pricedata, sharedata] = data_2;
+        return [gfpdata, pricedata, sharedata];
     }
     catch(ex) {
         console.log("error while fetching data: "+ex);
@@ -101,7 +108,7 @@ async function getMapData() {
 getData().then((data) => {
     if(data==null) 
         return;
-    [gfpdata, pricedata] = data;
+    [gfpdata, pricedata, sharedata] = data;
 
     getMapData().then((data) => {
         if(data==null)
@@ -110,6 +117,7 @@ getData().then((data) => {
         ready(null, data, gfpdata, pricedata);
 
     });
+    plotsharepercent(sharedata);
 
 });
 
@@ -135,6 +143,17 @@ zoombtn.addEventListener("click", (e) => {
         overlayrect.style = "display:none";
 });
 
+searchbtn.addEventListener("click", (e) => {
+    let textEl = document.getElementById("csearch");
+    addCountry(textEl.value, sharedata);
+});
+
+searchbar.addEventListener("keypress", (e) => {
+    if(e.key == "Enter") {
+        addCountry(e.target.value, sharedata);
+    }
+});
+
 document.addEventListener("keypress", (e) => {
     if(e.key == "q") {
         let overlayrect = document.getElementById("overlayrect");
@@ -144,3 +163,4 @@ document.addEventListener("keypress", (e) => {
             overlayrect.style = "display:none";
     }
 });
+
