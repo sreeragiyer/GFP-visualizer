@@ -1,10 +1,13 @@
 const selectedBarColor = "#00008B";
 const defaultBarColor = "#69b3a2";
+let commDataFull = [];
+let selectedMkt = "";
 
 export function plotbar(commData, commName) {
     let backbtn = document.getElementById("backbar");
     backbtn.style.visibility = "visible";
     d3.selectAll("#lp > svg").remove(); 
+    commDataFull = $.extend(true, [], commData); 
     let countryName = commData[0]["adm0_name"];
     document.getElementById("linep").innerText = `Comparison of ${commName} prices across markets in ${countryName}`;
     let marketNames = Array.from(new Set(commData.map(c => c["adm1_name"])));
@@ -137,7 +140,7 @@ export function plotLineBelowBar(commData, commName) {
         }
         else{
             x.domain([ x.invert(extent[0]), x.invert(extent[1]) ]);
-            redrawBarPlot(commData, [ x.invert(extent[0]), x.invert(extent[1]) ], commName);
+            redrawBarPlot(commDataFull, [ x.invert(extent[0]), x.invert(extent[1]) ], commName);
             svg.select(".brush").call(brush.move, null); // This remove the grey brush area as soon as the selection has been done
         }
 
@@ -166,7 +169,7 @@ export function plotLineBelowBar(commData, commName) {
     
     svg.on("dblclick", function() {
         x.domain(d3.extent(commDataAvg, function(d) { return d["date"]; }));
-        redrawBarPlot(commData, d3.extent(commDataAvg, function(d) { return d["date"]; }), commName);
+        redrawBarPlot(commDataFull, d3.extent(commDataAvg, function(d) { return d["date"]; }), commName);
         xAxisCall.transition().call(d3.axisBottom(x).tickFormat(d3.timeFormat("%m/%y")));
         svg.select('.line')
             .transition()
@@ -222,9 +225,6 @@ export function plotLineBelowBar(commData, commName) {
     let dateFormatter = d3.timeFormat("%m/%y");
     function mousemove(e) {
         let x0 = x.invert(d3.pointer(e)[0]);
-        // console.log(e.target, x.invert(e.layerY))
-        // console.log("point")
-        // console.log(d3.pointer(e))
         let i = bisectDate(commDataAvg, x0, 1);
         let d0 = commDataAvg[i - 1];
         let d1 = commDataAvg[i];
@@ -242,16 +242,7 @@ export function plotLineBelowBar(commData, commName) {
         .on("mouseover", function() { focus.style("display", null); })
         .on("mouseout", function() { focus.style("display", "none"); })
         .on("mousemove", mousemove);
-        // .on("keydown", (d) => {
-        //     console.log("md", d)
-        //     let currel = d3.select(".overlay");
-        //     currel.style("display", "none");
-        // })
-        // .on("keyup", (d) => {
-        //     console.log("mu", d)
-        //     let currel = d3.select(".overlay");
-        //     currel.style("display", null);
-        // });
+
 }
 
 function redrawBarPlot(commDataOg, dates, commName) {
@@ -270,7 +261,7 @@ function redrawBarPlot(commDataOg, dates, commName) {
         plotData.push(plotObj);
     }
     plotData.sort((b,a) => a["mp_price"] - b["mp_price"]);
-    const margin = {top: 15, right: 15, bottom: 50, left: 30},
+    const margin = {top: 15, right: 15, bottom: 50, left: 60},
     width = 840 - margin.left - margin.right,
     height = 180 - margin.top - margin.bottom;
     const x = d3.scaleBand()
@@ -303,10 +294,31 @@ function redrawBarPlot(commDataOg, dates, commName) {
             .attr("y", d => y(d["mp_price"]))
             .attr("width", x.bandwidth())
             .attr("height", d => height - y(d["mp_price"]))
-            .attr("fill", defaultBarColor)
+            .attr("fill", (d) => d["mname"] == selectedMkt ? selectedBarColor : defaultBarColor)
+            .on("mouseover", function(d,i) {
+                let textEl = document.getElementById(i["mname"].replace(/\s+/g, '-')+"-text");
+                textEl.style.display = null;
+                d.target.style.cursor = "pointer";
+            })
+            .on("mouseout", function(d,i) { 
+                let textEl = document.getElementById(i["mname"].replace(/\s+/g, '-')+"-text");
+                textEl.style.display = "none";
+                d.target.style.cursor = null;
+            })
             .on("click", (d,i) => {
                 filterByMarket(commData, commName, i["mname"], d);
             });
+
+    svg.selectAll("text.mybar")
+    .data(plotData)
+    .enter().append("text")
+        .attr("text-anchor", "middle")
+        .attr("id", (d) => d["mname"].replace(/\s+/g, '-')+"-text")
+        .style("font-size", "0.9em")
+        .style("display", "none")
+        .attr("x", function(d) {return x(d["mname"]); })
+        .attr("y", function(d) { return y(d["mp_price"]) - 5; })
+        .text(function(d) { return d["mp_price"]; });
 
 }
 
@@ -314,12 +326,14 @@ function filterByMarket(commData, commName, mktName, event) {
     d3.select("#linebelowbar").remove();
     if(event.target.getAttribute("fill") == selectedBarColor) {
         event.target.setAttribute("fill", defaultBarColor);
-        plotLineBelowBar(commData, commName);
+        selectedMkt = "";
+        plotLineBelowBar(commDataFull, commName);
     }
     else {
         d3.selectAll("rect").attr("fill", defaultBarColor);
         event.target.setAttribute("fill", selectedBarColor);
-        let filteredCommData = $.extend(true, [], commData); 
+        selectedMkt = mktName;
+        let filteredCommData = $.extend(true, [], commDataFull); 
         filteredCommData = filteredCommData.filter(c => c["adm1_name"] == mktName);
         plotLineBelowBar(filteredCommData, commName);
     }
