@@ -141,9 +141,18 @@ boxplotbtn.addEventListener("click", (e) => {
     d3.selectAll("#lp > svg").remove(); 
     lpdiv.style.display = "none";
     boxdiv.style.display = "flex";
-    plotbox(gfpdata, clickedCountry);
+    var plotYear = $('#year').find(":selected").text();
+    plotbox(gfpdata, clickedCountry, plotYear);
     boxplotbtn.style.visibility = "hidden";
 });
+
+$(function() {
+    $("#year").change(function() {
+        let plotYear = $('option:selected', this).text();
+        plotbox(gfpdata, clickedCountry, plotYear);
+    });
+});
+
 
 
 barbackbtn.addEventListener("click", (e) => {
@@ -178,7 +187,6 @@ searchbar.addEventListener("keypress", (e) => {
 $(function() {
     $("#global_stastics").change(function() {
         let selected_val = $('option:selected', this).text();
-        console.log(selected_val);
         if (selected_val=="Top Food Product Types") {
             //$('#country_product_count').hide(); // $('#country_product_count').empty();
             document.getElementById("country_product_count").style.display = "none";
