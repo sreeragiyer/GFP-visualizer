@@ -24,3 +24,7 @@ Some of the tasks this dashboard could help understand -
     this  will start a local server on port 8080
 
 - go to http://localhost:8080/ to view the dashboard
+
+#### built with 
+
+- JavaScript, D3.js,  Bootstrap, Plotly, HTML, CSS
