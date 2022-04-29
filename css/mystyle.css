@@ -35,7 +35,7 @@ div.tooltip {
       position: absolute;
 }
 #lptotal {
-    width: 80%;
+    width: 85%;
     height: 80%;
     display: none;
     border-radius: 2%;
@@ -85,6 +85,7 @@ div.tooltip {
 .closediv {
     float: right;
     margin-right: 1%;
+    margin-bottom: 1%;
 }
 .backbtn {
     visibility: hidden;

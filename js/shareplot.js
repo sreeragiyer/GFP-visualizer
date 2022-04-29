@@ -65,12 +65,9 @@ export function addCountry(countryName, sharedata) {
     errEl.style.visibility = "hidden";
     if(!countryName || countryName == "") return;
     countryName = countryName.trim().toLowerCase();
-    console.log(countryName)
     if(currPlotData.find(d => d["country"].toLowerCase() == countryName)) return;
     let redData = sharedata.map(d => ({"country" : d["Entity"], "val" : parseFloat(d["Percent"]).toFixed(2)}));
-    console.log(redData)
     let countryObj = redData.find(d => d["country"].toLowerCase() == countryName);
-    console.log(countryObj)
     if(!countryObj) {
         errEl.style.visibility = "visible";
         return;
